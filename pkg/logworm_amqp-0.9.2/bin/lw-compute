@@ -1,0 +1,66 @@
+#!/usr/local/bin/ruby
+
+require 'rubygems'
+require 'logworm_utils'
+require 'optparse'
+
+options = {
+  :aggregate_group => [],
+  :conditions => [],
+  :start => nil,
+  :end => nil,
+  :debug => false
+}
+
+option_parser = OptionParser.new do |opts|
+  opts.banner = "Usage: #{$0} [options] <log table> <function> <field>"
+
+  opts.on("--app app", String, "Specify the Heroku app") do |app|
+    options[:app] = app.strip 
+  end
+
+  opts.on("-g group", String, "Specify an aggregation group (e.g, hour(_ts_utc), or response.code)") do |k|
+    options[:aggregate_group] = k
+  end
+
+  opts.on("-c condition", String, "Specify a condition to match. May be used multiple times") do |c|
+    options[:conditions] << c.strip 
+  end
+
+  opts.on("-s starttime", String, "Specify the start time for the query") do |c|
+    options[:start] = c.strip 
+  end
+
+  opts.on("-e endtime", String, "Specify the end time for the query") do |c|
+    options[:end] = c.strip 
+  end
+
+  opts.on("-v", "Show debug information") do 
+    options[:debug] = true
+  end
+  
+  opts.on( '-h', '--help', 'Display this screen' ) do
+    puts option_parser.help
+    exit(1)
+  end
+  
+end
+
+# Parse, and get the required <table>
+option_parser.parse!
+if ARGV.size == 3
+  table = ARGV[0].strip
+  function = ARGV[1].strip
+  field = ARGV[2].strip
+elsif ARGV.size == 2
+  table = ARGV[0].strip
+  function = ARGV[1].strip
+else
+  puts option_parser.help
+  exit(1)
+end
+
+# and run
+LogwormCompute.new(table, function, field, options).run
+
+

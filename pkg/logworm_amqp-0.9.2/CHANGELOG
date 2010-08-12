@@ -1,0 +1,176 @@
+v0.9.2
+    Adds support for attaching extra data to log entries (via log_with_request). The main purpose is to allow users to add their own
+    data to the automatically-generated web_log log.
+    Renames (or, rather, aliases for now) lw_log to log_in
+    
+v0.9.1
+    Explicitly state dependency on minion 0.1.15
+v0.9.0
+    Combines base and client into a single gem
+    
+base
+----
+v0.8.9
+    Cleaned up pushed stats output.
+
+v0.8.8
+	Now retrieve amqp_url remotely for better security.
+
+v0.8.5
+	Started logging amqp usage statistics to our servers (randomly) for better QA.
+
+v0.8.4
+	No longer prints out amqp information when logging and should also self check for amqp url updates incase it was changed.
+
+v0.8.3
+	Minor Fix
+
+v0.8.0
+	Dropped http for amqp for high scalability and reduce latency  
+
+v0.7.7
+    DB.config now receives an optional app parameter, for the cases where you want to call command-line tools from a directory other than the app's directory... or when you have more than one Heroku remote/app from the same directory
+
+v0.7.6
+    QueryBuilder now allows Time objects as arguments for timeframe
+
+v0.7.5
+    :force_ts now default in QueryBuilder
+    
+v0.7.4
+    Eliminated default host for database. Must be specified in the configuration environment.
+
+v0.7.3
+    Cleaner way to compose the URL for the DB (now logworm://key:secret@host/token/token_secret/)
+
+v0.7.1
+    Added DB.from_config_or_die, to throw exception if DB cannot be initialized
+
+v0.7.0 
+    Changes to run as a Heroku add-on
+    Configuration now stored as a URL
+    Now requires Heroku gem
+       
+v0.6.1 
+    fixed query builder
+
+v0.6.0 
+    added query builder
+
+v0.5.1 
+    removed memcache dependency, added memcache-client
+
+v0.5.0 
+    removed utils, moved them to separate gem
+
+v0.4.1 
+    added start and end options to lw-compute and lw-tail
+
+v0.4.0 
+    added lw-compute tool, to run aggregate queries
+
+v0.3.0 
+    added lw-heroku tool, to push configuration variables to heroku
+
+v0.2.0 
+    removed app/ libraries. Added tail as a utility, lw-tail as a command
+
+v0.1.0 
+    initial version.
+    
+    
+client
+------
+v0.8.8
+    Cleaned up pushed stats output.
+
+v0.8.7
+	Started logging amqp usage statistics to our servers (randomly) for better QA.
+
+v.0.8.6
+	No longer prints out amqp information when logging and should also self check for amqp url updates incase it was changed.
+
+v0.8.5
+	Small fix
+
+v0.8.0
+	Dropped http for amqp for high scalability and reduce latency
+
+v0.7.2
+    Renamed Rails and Rack configuration commands:
+        lw_disable_request_logging ==> donot_log_requests
+        lw_log_request_headers     ==> log_headers
+        lw_enable_dev_logging      ==> log_in_development
+        
+    Renamed :headers field in web_log to :request_headers
+        
+v0.7.1
+    lw-tail and lw-compute now receive an optional app parameter, for the cases where you want to call command-line tools from a directory other than the app's directory... or when you have more than one Heroku remote/app from the same directory
+
+v0.7.0
+    Eliminated long logs. Instead, there's now a parameter (log_request_headers in Rack, lw_log_request_headers in Rails) to add
+       request and response headers to the web_log. 
+    Cleaned up fields in the web_log table
+
+    Added option to turn off automatic logging of requests (disable_request_logging in Rack, lw_disable_request_logging in Rails)
+    Added option to turn on logging even if in development mode (enable_dev_logging in Rack, lw_enable_dev_logging in Rails)
+
+    Honor filter_parameter_logging switch when used with Rails
+
+    Cleaned up log and flush
+    Cleaned up display of elapsed time for flush
+    Cleaned up call from Rack and Rails, and enforce timeout (1 sec by default)
+    Added unit tests
+    
+v0.6.2
+    Added list_tables command
+    
+v0.6.1
+    Added a bit of documentation
+
+v0.6.0 
+    Add support for querying API: lw_query
+    
+v0.5.6
+    log HEROKU_QUEUE as an integer value
+    
+v0.5.5
+    Added default logging of HEROKU_QUEUE   
+
+v0.5.4
+    Removed obsolete lw-heroku application
+    
+v0.5.3
+    Show nicer error message with tail and compute if the app is not properly configured.
+
+v0.5.2
+    Fixes minor issues with in Rails logging
+
+v0.5.1
+    Fixes minor issues with logging statements sent to console
+    
+v0.5.0
+    Supports new base logworm gem, which can work as a Heroku addon
+    Configuration parameters now stored as URL
+    No error if logworm cannot be properly configured -- lw_log simply ignored
+    No logging in development mode
+    
+v0.4.1
+    Show in console time spent communicating with the server.
+    
+v0.4.0 Added support for running on Rails!
+    To use, add config.gem ‘logworm_client’ to environment.rb
+    Then you can configure in ApplicationController, via logs_requests [:short | :long]+
+    Works from views, models, or controllers.
+    
+v0.3.2 added lw_log method --fixed small issue
+
+v0.3.1 added lw_log method
+
+v0.3.0 ensure gem and dependencies live in gemcutter
+
+v0.2.0 log short requests by default in the rack
+
+v0.1.1 minor changes
+
+v0.1.0 initial version.

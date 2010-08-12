@@ -1,0 +1,84 @@
+#!/usr/local/bin/ruby
+
+require 'rubygems'
+require 'logworm_utils'
+require 'optparse'
+
+def help(option_parser, options)
+  puts option_parser.help
+  puts
+  LogwormTail.list(options)
+end
+
+options = {
+  :limit => 200,
+  :loop => false,
+  :frequency => 10,
+  :fields => [],
+  :conditions => [],
+  :start => nil,
+  :end => nil,
+  :debug => false,
+  :fkat => false
+}
+
+option_parser = OptionParser.new do |opts|
+  opts.banner = "Usage: #{$0} [options] <log table>"
+
+  opts.on("--app app", String, "Specify the Heroku app") do |app|
+    options[:app] = app.strip 
+  end
+
+  opts.on("-f [secs]", Integer, 
+          "Continuously check for more data, every [secs] seconds.", "Default: #{options[:frequency]}") do |s| 
+    options[:loop] = true
+    options[:frequency] = s if s
+  end
+
+  opts.on("-r limit", Integer, "Specify how many log entries to fetch.", "Default: #{options[:limit]}") do |n|
+    options[:limit] = n
+  end
+
+  opts.on("-k fields", String, "Specify a comma-separated list of fields to retrieve.") do |k|
+    options[:fields] = k.split(",").map {|f| f.strip}
+  end
+
+  opts.on("-c condition", String, "Specify a condition to match. May be used multiple times") do |c|
+    options[:conditions] << c.strip 
+  end
+
+  opts.on("-s starttime", String, "Specify the start time for the query") do |c|
+    options[:start] = c.strip 
+  end
+
+  opts.on("-e endtime", String, "Specify the end time for the query") do |c|
+    options[:end] = c.strip 
+  end
+
+  opts.on("--flat", "Do not expand log entries when printing them") do 
+    options[:flat] = true
+  end
+
+  opts.on("-v", "Show debug information") do 
+    options[:debug] = true
+  end
+  
+  opts.on( '-h', '--help', 'Display this screen' ) do
+    options[:help] = true
+  end
+  
+end
+
+# Parse, and get the required <table>
+option_parser.parse!
+table = ARGV.pop
+if !table or options[:help]
+  help option_parser, options
+  exit(1)
+end
+table.strip!
+
+# and run
+t = LogwormTail.new(table, options).run
+
+
