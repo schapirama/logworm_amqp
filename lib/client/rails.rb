@@ -4,7 +4,7 @@
 # By default it will automatically log web requests (in a short format) into web_log
 # Can also log headers, if specified
 ###
-if defined?(ActionController)
+if defined?(ActionController) and Rails::VERSION::STRING and Rails::VERSION::STRING < "3.0.0"
 
   require 'benchmark'
 
@@ -84,7 +84,7 @@ if defined?(ActionController)
 
       begin 
         Timeout::timeout(@@timeout) { 
-          sent, elapsed = Logworm::Logger.flush
+          Logworm::Logger.flush
         } 
       rescue Exception => e 
         # Ignore --nothing we can do. The list of logs may (and most likely will) be preserved for the next request

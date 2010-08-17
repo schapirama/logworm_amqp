@@ -5,14 +5,15 @@ require 'hmac-sha1'
 require 'cgi'
 require 'base64'
 
-include Minion
-logger do |msg|
-end
 
 module Logworm
   class ForbiddenAccessException < Exception ; end
   class DatabaseException < Exception ; end
   class InvalidQueryException < Exception ; end
+
+  include Minion
+  Minion::logger do |msg|
+  end
   
   class DB
     

@@ -1,3 +1,8 @@
+v0.9.3
+    Initial support for Rails 3. Based on Rack.
+        Only include Rails package is Rails < 3.0.0
+        Include Minion inside of Logworm module --otherwise creates conflicts with Rails Logger
+        
 v0.9.2
     Adds support for attaching extra data to log entries (via log_with_request). The main purpose is to allow users to add their own
     data to the automatically-generated web_log log.

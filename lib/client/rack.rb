@@ -49,7 +49,7 @@ module Logworm
 
       begin 
         Timeout::timeout(@timeout) { 
-          sent, elapsed = Logger.flush
+          Logger.flush
         } 
       rescue Exception => e 
         # Ignore --nothing we can do. The list of logs may (and most likely will) be preserved for the next request
