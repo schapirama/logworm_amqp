@@ -30,7 +30,7 @@ module Logworm
     private 
     def log_request(env, status, response_headers, appTime)
       method       = env['REQUEST_METHOD']
-      path         = (env['REQUEST_PATH'].nil? or env['REQUEST_PATH'] == "")  ? "/" : env['REQUEST_PATH']
+      path         = env['PATH_INFO'] || env['REQUEST_PATH'] || "/"
       ip           = env['REMOTE_ADDR']
       http_headers = env.reject {|k,v| !(k.to_s =~ /^HTTP/) }
       queue_size   = env['HTTP_X_HEROKU_QUEUE_DEPTH'].nil? ? -1 : env['HTTP_X_HEROKU_QUEUE_DEPTH'].to_i

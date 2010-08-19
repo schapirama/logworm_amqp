@@ -67,7 +67,7 @@ if defined?(ActionController) and Rails::VERSION::STRING and Rails::VERSION::STR
       path         = request.path.blank? ? "/" : request.path
       ip           = request.env['REMOTE_ADDR']
       http_headers = request.headers.reject {|k,v| !(k.to_s =~ /^HTTP/) }
-      status       = response.status ? (response.status.is_a?(String) ? response.status[0..2] : response.status.to_s) : "NA"
+      status       = response.status ? (response.status.is_a?(String) ? response.status[0..2].to_i : response.status.to_s.to_i) : -1
       queue_size   = request.env['HTTP_X_HEROKU_QUEUE_DEPTH'].blank? ? -1 : request.env['HTTP_X_HEROKU_QUEUE_DEPTH'].to_i
 
       entry = { :summary         => "#{method} #{path} - #{status} #{appTime}", 
