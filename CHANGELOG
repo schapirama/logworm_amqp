@@ -1,3 +1,6 @@
+v.9.4
+	Minor timeout changes to production environment
+	
 v0.9.3
     Initial support for Rails 3. Based on Rack.
         Only include Rails package is Rails < 3.0.0

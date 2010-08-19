@@ -13,7 +13,7 @@ if defined?(ActionController) and Rails::VERSION::STRING and Rails::VERSION::STR
     @@log_requests = true
     @@log_headers  = false
     @@dev_logging  = false
-    @@timeout = 1
+    @@timeout = (RAILS_ENV == 'production' ? 1 : 5) 
     Logworm::Logger.use_default_db
     
     ###

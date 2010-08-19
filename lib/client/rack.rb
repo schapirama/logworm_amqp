@@ -10,7 +10,7 @@ module Logworm
       @log_headers  = (options[:log_headers] and options[:log_headers] == true)
       @dev_logging  = (options[:log_in_development] and options[:log_in_development] == true)
       Logger.use_default_db
-      @timeout = 1
+      @timeout = (ENV['RACK_ENV'] == 'production' ? 1 : 5) 
     end
 
     def call(env)
