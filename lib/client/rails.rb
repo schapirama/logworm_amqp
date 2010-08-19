@@ -7,13 +7,13 @@
 if defined?(ActionController) and Rails::VERSION::STRING and Rails::VERSION::STRING < "3.0.0"
 
   require 'benchmark'
-
+  
   ActionController::Base.class_eval do
     ## Basic settings: log requests, without headers. Use default db, and timeout after 1 second
     @@log_requests = true
     @@log_headers  = false
-    @@dev_logging  = false
-    @@timeout = (RAILS_ENV == 'production' ? 1 : 5) 
+    @@log_envs     = ["production"]
+    @@timeout      = (RAILS_ENV == 'production' ? 1 : 5) 
     Logworm::Logger.use_default_db
     
     ###
@@ -35,8 +35,12 @@ if defined?(ActionController) and Rails::VERSION::STRING and Rails::VERSION::STR
     ###
     # Turn on logging in development mode
     ###
-    def self.log_in_development
-      @@dev_logging = true
+    def self.log_in_development # Kept for backwards compatibility
+      @@log_envs << "development"
+    end
+    
+    def self.log_environments(*envs)
+      @@log_envs = envs
     end
     
     ###
@@ -44,9 +48,7 @@ if defined?(ActionController) and Rails::VERSION::STRING and Rails::VERSION::STR
     # Call the original method, logs the request unless disabled, and flushes the logworm list
     ###
     def process_with_logworm_log(request, response, method = :perform_action, *arguments)
-      unless (RAILS_ENV == 'production' or (RAILS_ENV == 'development' and @@dev_logging))
-        return process_without_logworm_log(request, response, method, *arguments) 
-      end
+      return process_without_logworm_log(request, response, method, *arguments) unless @@log_envs.include?(RAILS_ENV)
       
       Logworm::Logger.start_cycle
       begin

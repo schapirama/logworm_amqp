@@ -1,4 +1,12 @@
-v.9.4
+v0.9.5
+  A few changes:
+     - Add support for log_environments(arr) configuration, to specify a list of environments in which logworm should log
+       (thanks to Erik Hanson @ Top Prospect)
+     - Fixed problems with request.path and request.status on Rails 2.3.x
+       (thanks to Andrew Cove @ getaquirk.com)
+     - The db server now specifies a PREFIX for AMQP queue names, to make debugging easier (e.g., to send msgs to lw-staging)
+     
+v0.9.4
 	Minor timeout changes to production environment
 	
 v0.9.3

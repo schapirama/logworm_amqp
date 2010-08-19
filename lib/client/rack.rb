@@ -8,13 +8,14 @@ module Logworm
       
       @log_requests = (options[:donot_log_requests].nil? or options[:donot_log_requests] != true)
       @log_headers  = (options[:log_headers] and options[:log_headers] == true)
-      @dev_logging  = (options[:log_in_development] and options[:log_in_development] == true)
+      @log_envs     = options[:log_environments] || ["production"]
+      @log_envs << "development" if (options[:log_in_development] and options[:log_in_development] == true) # backwards compatibility
       Logger.use_default_db
       @timeout = (ENV['RACK_ENV'] == 'production' ? 1 : 5) 
     end
 
     def call(env)
-      return @app.call(env) unless (ENV['RACK_ENV'] == 'production' or (ENV['RACK_ENV'] == 'development' and @dev_logging))
+      return @app.call(env) unless @log_envs.include?(ENV['RACK_ENV'])
 
       Logger.start_cycle
       begin
