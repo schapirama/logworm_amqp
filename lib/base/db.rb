@@ -115,6 +115,7 @@ module Logworm
           resp = db_call(:get, "#{host_with_protocol}/amqp_url")
           @amqp_url = resp["url"]
           @stats_freq = resp["stats_freq"]
+          @amqp_prefix = resp["prefix"] || "lw"
           $stderr.puts "logworm server acquired: #{@amqp_url.gsub(/[^@]+@/, "amqp://")}"
           Minion.amqp_url = @amqp_url
           reset_stats
@@ -130,7 +131,7 @@ module Logworm
        if get_amqp_url
          content = payload.to_json
          sig= signature(content, @token_secret )
-         Minion.enqueue(queue, {:payload => content, :consumer_key => @token, :signature => sig, 
+         Minion.enqueue("#{@amqp_prefix}.#{queue}", {:payload => content, :consumer_key => @token, :signature => sig, 
                                 :env => ENV['RACK_ENV'] || "?"})
        end
     end
@@ -152,7 +153,7 @@ module Logworm
     def push_stats()
       avg = sprintf('%.6f', (@total_time / @tock)).to_f
       len = sprintf('%.2f', (Time.now - @sampling_start)).to_f
-      to_amqp("lw.stats", {:avg => avg , :max => @amqp_max, :min => @amqp_min, 
+      to_amqp("stats", {:avg => avg , :max => @amqp_max, :min => @amqp_min, 
                            :total => @total_time, :count => @tock, :sampling_length => len})
       $stderr.puts "logworm statistics: #{@tock} messages sent in last #{len} secs. Times: #{avg * 1000}/#{@amqp_min * 1000}/#{@amqp_max * 1000} (avg/min/max msecs)"
        reset_stats
@@ -166,7 +167,7 @@ module Logworm
   
     def batch_log(entries)
       recording_stats do
-        to_amqp("lw.logging", {:entries => entries})
+        to_amqp("logging", {:entries => entries})
       end
     end
 

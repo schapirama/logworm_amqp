@@ -64,10 +64,10 @@ if defined?(ActionController) and Rails::VERSION::STRING and Rails::VERSION::STR
     private
     def log_request(request, response, appTime)
       method       = request.env['REQUEST_METHOD']
-      path         = request.env['REQUEST_PATH'].blank? ? "/" : request.env['REQUEST_PATH']
+      path         = request.path.blank? ? "/" : request.path
       ip           = request.env['REMOTE_ADDR']
       http_headers = request.headers.reject {|k,v| !(k.to_s =~ /^HTTP/) }
-      status       = response.status[0..2]
+      status       = response.status ? (response.status.is_a?(String) ? response.status[0..2] : response.status.to_s) : "NA"
       queue_size   = request.env['HTTP_X_HEROKU_QUEUE_DEPTH'].blank? ? -1 : request.env['HTTP_X_HEROKU_QUEUE_DEPTH'].to_i
 
       entry = { :summary         => "#{method} #{path} - #{status} #{appTime}", 
