@@ -92,12 +92,19 @@ class LogwormTail
       end
       last
     end
-
+    
     def print_row(r)
-      if @options[:flat]
-        puts "\t" + r.keys.sort.map {|k| "#{k}: #{r[k].inspect}"}.join(', ')
+      
+      if @options[:fields].size > 0
+        keys_to_print = @options[:fields]
       else
-        r.keys.sort.each do |k|
+        keys_to_print = r.keys.sort
+      end
+      
+      if @options[:flat]
+        puts "\t" + keys_to_print.map {|k| "#{k}: #{r[k].inspect}"}.join(', ')
+      else
+        keys_to_print.each do |k|
           puts "\t#{k}: #{r[k].inspect}"
         end
         puts

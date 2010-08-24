@@ -1,3 +1,7 @@
+v0.9.6
+	- Preserves the order of desired fields in a query. 
+	- Handled an exception which was being thrown when the connection to the server could not be established.
+
 v0.9.5
   A few changes:
      - Add support for log_environments(arr) configuration, to specify a list of environments in which logworm should log

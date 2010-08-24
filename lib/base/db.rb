@@ -128,12 +128,10 @@ module Logworm
     end
         
     def to_amqp(queue, payload)
-       if get_amqp_url
-         content = payload.to_json
-         sig= signature(content, @token_secret )
-         Minion.enqueue("#{@amqp_prefix}.#{queue}", {:payload => content, :consumer_key => @token, :signature => sig, 
-                                :env => ENV['RACK_ENV'] || "?"})
-       end
+      content = payload.to_json
+      sig= signature(content, @token_secret )
+      Minion.enqueue("#{@amqp_prefix}.#{queue}", {:payload => content, :consumer_key => @token, :signature => sig, 
+                              :env => ENV['RACK_ENV'] || "?"})
     end
   
     def recording_stats()
@@ -166,8 +164,10 @@ module Logworm
     end
   
     def batch_log(entries)
-      recording_stats do
-        to_amqp("logging", {:entries => entries})
+      if get_amqp_url
+        recording_stats do
+          to_amqp("logging", {:entries => entries})
+        end
       end
     end
 
