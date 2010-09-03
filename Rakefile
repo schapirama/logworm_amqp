@@ -1,5 +1,5 @@
 require 'echoe'
-Echoe.new('logworm_amqp', '0.9.6') do |p|
+Echoe.new('logworm_amqp', '0.9.7') do |p|
   p.description = "logworm - logging service"
   p.url = "http://www.logworm.com"
   p.author = "Pomelo, LLC"
