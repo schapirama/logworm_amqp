@@ -21,9 +21,9 @@ class LogwormCompute
     def run
       # Create a resource for the query
       begin
-        query_data = @db.query(@table, @query.to_json)
+        query_data = @db.query(@table, @query.to_json, 60) # 60 second ttl by default
         url = query_data["results_uri"]
-        rows = @db.results(url + "?nocache=1")["results"]
+        rows = @db.results(url)["results"]
       rescue Logworm::DatabaseException, Logworm::ForbiddenAccessException  => e
         $stderr.puts "Error: #{e}"
         exit(-1)

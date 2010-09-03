@@ -46,10 +46,10 @@ alias :log_with_request :lw_with_log
 # raises Logworm::DatabaseException, Logworm::ForbiddenAccessException, Logworm::InvalidQueryException
 # or just a regular Exception if it cannot find the URL to the logging database
 ###
-def lw_query(logname, query = {}) 
+def lw_query(logname, query = {}, ttl = nil) 
   db = Logworm::DB.from_config_or_die                                   # Establish connection to DB
   query = Logworm::QueryBuilder.new(query).to_json if query.is_a? Hash  # Turn query into proper JSON string
-  query_data = db.query(logname, query)                                 # POST to create query
+  query_data = db.query(logname, query, ttl)                            # POST to create query
   db.results(query_data["results_uri"])                                 # GET from query's results uri
 end
 

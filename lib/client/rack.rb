@@ -8,6 +8,7 @@ module Logworm
       
       @log_requests = (options[:donot_log_requests].nil? or options[:donot_log_requests] != true)
       @log_headers  = (options[:log_headers] and options[:log_headers] == true)
+      @log_apache   = (options[:log_apache] and options[:log_apache] == true)
       @log_envs     = options[:log_environments] || ["production"]
       @log_envs << "development" if (options[:log_in_development] and options[:log_in_development] == true) # backwards compatibility
       Logger.use_default_db
@@ -44,8 +45,9 @@ module Logworm
                 :response_status => status, 
                 :profiling       => appTime,
                 :queue_size      => queue_size}
-      entry[:request_headers] = http_headers if @log_headers
+      entry[:request_headers]  = http_headers if @log_headers
       entry[:response_headers] = response_headers if @log_headers
+      entry[:apache_log]       = Logger.apache_log(ip, method, path, env, status, response_headers) if @log_apache
       Logger.log(:web_log, entry) if @log_requests
 
       begin 
@@ -54,7 +56,7 @@ module Logworm
         } 
       rescue Exception => e 
         # Ignore --nothing we can do. The list of logs may (and most likely will) be preserved for the next request
-        env['rack.errors'].puts("logworm call failed: #{e}")
+        $stderr.puts("logworm call failed: #{e}")
       end
     end
 

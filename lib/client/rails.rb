@@ -12,6 +12,7 @@ if defined?(ActionController) and Rails::VERSION::STRING and Rails::VERSION::STR
     ## Basic settings: log requests, without headers. Use default db, and timeout after 1 second
     @@log_requests = true
     @@log_headers  = false
+    @@log_apache   = false
     @@log_envs     = ["production"]
     @@timeout      = (RAILS_ENV == 'production' ? 1 : 5) 
     Logworm::Logger.use_default_db
@@ -38,6 +39,15 @@ if defined?(ActionController) and Rails::VERSION::STRING and Rails::VERSION::STR
     def self.log_in_development # Kept for backwards compatibility
       @@log_envs << "development"
     end
+    
+    ###
+    # Log a field with Apache common log
+    # Use from ApplicationController
+    ###
+    def self.log_apache
+      @@log_apache = true
+    end
+    
     
     def self.log_environments(*envs)
       @@log_envs = envs
@@ -80,8 +90,9 @@ if defined?(ActionController) and Rails::VERSION::STRING and Rails::VERSION::STR
                 :response_status => status, 
                 :profiling       => appTime,
                 :queue_size      => queue_size}
-      entry[:request_headers] = http_headers if @@log_headers
+      entry[:request_headers]  = http_headers if @@log_headers
       entry[:response_headers] = response.headers if @@log_headers
+      entry[:apache_log]       = Logworm::Logger.apache_log(ip, method, path, request.env, status, response.headers) if @@log_apache
       Logworm::Logger.log(:web_log, entry) if @@log_requests
 
       begin 

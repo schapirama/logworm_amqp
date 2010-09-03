@@ -34,6 +34,8 @@ module Logworm
     ###
     def self.start_cycle
       $request_id = "#{Thread.current.object_id}-#{(Time.now.utc.to_f * 1000).to_i}"
+      $lr_queue = []
+      $attaches = {}
     end
 
     ###
@@ -87,7 +89,6 @@ module Logworm
       # Return if no server
       unless $lw_server
         $stderr.puts "\t logworm not configured. #{to_send} entries dropped."
-        $lr_queue = [] 
         return [0,0]
       end
       
@@ -99,10 +100,21 @@ module Logworm
       
       startTime = Time.now
       $lw_server.batch_log($lr_queue.to_json)
-      $lr_queue = [] 
       endTime = Time.now
       
       [to_send, (endTime - startTime)]
+    end
+    
+    ###
+    # Utility function
+    ###
+    def self.apache_log(ip, method, path, env, status, response_headers)
+      if response_headers['Content-Length']
+        response_length = response_headers['Content-Length'].to_s == '0' ? '-' : response_headers['Content-Length']
+      else
+        response_length = "-"
+      end
+      "#{ip} - #{env["REMOTE_USER"] || "-"} [#{Time.now.strftime("%d/%b/%Y:%H:%M:%S %z")}] \"#{method} #{path} #{env['HTTP_VERSION']}\" #{status} #{response_length} \"#{env['HTTP_REFERER']}\" \"#{env['HTTP_USER_AGENT']}\""
     end
     
     private

@@ -1,3 +1,11 @@
+v0.9.7
+  - lw_query now accepts a TTL parameter -- 300 seconds by default, can be lowered up to 20 seconds min
+  - lw-compute now has a standard TTL of 60 seconds
+  - no longer preserves entries from one request to the other --made more sense when there were timeouts, but with AMQP we don't 
+    expect to see so many of them. Fixes bugs with log_with_request calls as well.
+  - Adds a new optional field in the web_log table, :apache_log, a string with information about the HTTP request in 
+    the regular Apache Log format (requested by Dave Brwon @ Top Prospect)
+  
 v0.9.6
 	- Preserves the order of desired fields in a query. 
 	- Handled an exception which was being thrown when the connection to the server could not be established.

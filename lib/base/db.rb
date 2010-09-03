@@ -87,8 +87,10 @@ module Logworm
       db_call(:get, "#{host_with_protocol}/") || []
     end
   
-    def query(table, cond)
-      db_call(:post, "#{host_with_protocol}/queries", {:table => table, :query => cond})
+    def query(table, cond, ttl = nil)
+      ttl = nil if ttl and !ttl.is_a? Fixnum
+      ttl = 20  if ttl and ttl.to_i > 0 and ttl.to_i < 20
+      db_call(:post, "#{host_with_protocol}/queries", {:table => table, :query => cond, :ttl => ttl})
     end
     
     
